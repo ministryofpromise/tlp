@@ -10,7 +10,7 @@ from collections import Counter
 from Levenshtein import distance
 from lib.filter_list import *
 import numpy as np
-import types,re,operator
+import types,re,operator,codecs
 
 class TLPFilter:
 
@@ -36,7 +36,7 @@ class TLPFilter:
                         if re.match('^#', line):
                             continue
                         self.global_filterlist.append(unicode(line.strip().lower()))
-                        self.global_filterlist + keyword_filterlist
+                        #self.global_filterlist + keyword_filterlist
                 else:
                     raise ValueError("supplied blacklist is not of type <str> or <list>")
 
@@ -51,6 +51,8 @@ class TLPFilter:
             - nonalpha_pct: function to determine the ratio of non-alpha tokens in a sentence
             - nonalpha_thresh: analyzes each sentence in a blob and derives the threshold  
               ratio of junk tokens per sentence.
+            - moz_tlds: return a list of tlds from the mozilla project tld list 
+              maintained at https://publicsuffix.org/list/effective_tld_names.dat
     '''
 
     def nonalpha_pct(self, sentence):
@@ -75,10 +77,17 @@ class TLPFilter:
             nonalpha_ratios.append(self.nonalpha_pct(s))
 
         return(np.median(nonalpha_ratios) + (np.std(nonalpha_ratios) * 3))
+
+
+    def moz_tlds(self):
+        f = codecs.open('lib/effective_tld_names.dat', 'r', 'utf-8')
+        moz_tlds = f.readlines()
+        moz_tlds = [item.strip() for item in moz_tlds if not (re.match('^//', item) or re.match('^$', item))]
     
+        return moz_tlds
 
     ''' 
-    clean functions
+    filter functions
      
     take the TextBlob primative types (sentences, words, tokens) and clean them through the removal or normalization of:
             - items without punctuation
@@ -94,7 +103,7 @@ class TLPFilter:
 
     def text(self, text):
 
-        # check for text, transform to unicode if necessary
+        # check for text, transform to unicode if necessary 
         if text is not None:
             if not (type(text) is unicode or type(text) is str):
                 raise TypeError("supplied text object of type that is not str or unicode")
@@ -124,6 +133,8 @@ class TLPFilter:
             if re.match('(?:^[0-9]+?|[0-9]+?[\n\r]+?$)', sentence):
                 continue
             words = sentence.split()   
+            if len(words) <= 3:
+                continue
             for word in words:
                 # boring word
                 if word.lower() in stopwords:
@@ -134,20 +145,13 @@ class TLPFilter:
                 # links
                 if re.match(r'^[a-zA-Z]+\:\/\/', word):
                     continue
-                # not title case
+                # no title case headings
                 if not re.match('^[0-9A-Z]{1}', word):
                     s1_list.append(sentence)
                     break
 
         # let's clear out anything with a nonalpha token ratio higher than the threshold
         
-        #for s in s1_list:
-            #print s
-            #print self.nonalpha_pct(Sentence(s))
-            #print blob_nonalpha_thresh
-            #print "#########################################"
-
-        #s2_list = [s for s in s1_list if self.nonalpha_pct(Sentence(s)) < blob_nonalpha_thresh]
         s2_list = [s for s in s1_list if self.nonalpha_pct(Sentence(s)) < (len(s)/4)]
                 
         # now that we've got a semi-clean set of data, we can do some statistical analysis
@@ -173,24 +177,13 @@ class TLPFilter:
 
             sentence_outliers = [k.strip().lower() for (k,v) in sentence_counts.iteritems() if v >= (sc_median + (sc_std * 2)) > 1]
             self.global_filterlist += sentence_outliers
-            #for i in sentence_outliers:
-                #print TextBlob(i).sentences
             for s in s2_list:
-                #print s
                 if s.lower() in self.global_filterlist:
-                    #print "### in filter list:"
-                    #print s
                     continue
                 for o in sentence_outliers:
                     if distance(o, s.lower()) < float(len(s) * .35):
-                        #print "###### lev match for: "
-                        #print s
-                        #print o
                         break
                     elif o in s.lower():
-                        #print "######### inverse match for: " 
-                        #print s
-                        #print o
                         break
                 else:
                     final_list.append(s)
@@ -217,11 +210,16 @@ class TLPFilter:
         # remove all stopwords
         stopwords = sw.words("english")
         words = [word for word in keywords if word not in stopwords] 
+        words = [word for word in keywords] 
+        #words = [word.singularize() for word in keywords] 
         nwords = []
         for word in words:
+            if word.string in keyword_filterlist:
+                continue
             for term in self.global_filterlist:
                 if word.string in term:
-                    break
+                    pass
+                    #break
             else:
                 nwords.append(word)
 
@@ -240,7 +238,7 @@ class TLPFilter:
         if not (mode == 'pre' or mode == 'post'):
             raise ValueError('invalid mode specified')
 
-        # pre-filter to clean text specifically for optimal ioc parsing
+        # pre-filter to clean raw text for optimal ioc parsing
         if mode == 'pre':
 
             if not data or type(data) is not unicode:
@@ -248,8 +246,8 @@ class TLPFilter:
 
             # stupid "object replacement character" -- essentially a utf space
             data = [re.sub(ur'\uFFFC+', ' ', w) for w in data]
+            data = [re.sub(ur'[\s\t\n\r]', ' ', w) for w in data]
             data = "".join(data).split(' ')
-            data = [re.sub(ur'[\s\t\n\r]', '', w) for w in data]
 
             return data
 
@@ -259,11 +257,20 @@ class TLPFilter:
             if not type(data) is dict or data is None:
                 raise ValueError('invalid data supplied')
     
+            moz_tlds = self.moz_tlds()
             for ioc in data['domain'].copy():
                 filterlist = alexa_filterlist + ioc_filterlist['domain']
                 for domain in filterlist:
                     re_match = ur'.*' + re.escape(domain) + '$'
                     if re.match(re_match, ioc):
                         data['domain'].remove(ioc)
+                        break
+
+                for tld in moz_tlds:
+                    re_match = ur'.*\.?' + re.escape(tld) + '$'
+                    if re.match(re_match, ioc):
+                        break
+                else:
+                    data['domain'].remove(ioc)
     
             return data

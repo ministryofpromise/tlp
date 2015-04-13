@@ -103,6 +103,7 @@ class TLP:
         if len(self._keywords) > 0:
             return self._keywords
 
+        blob = TextBlob(self.summary)
         keywords = self._blob.words
         keywords = self._tlpfilter.keywords(keywords)
         keywords_counted = dict(Counter(keywords))
@@ -132,8 +133,8 @@ class TLP:
         self._debug['keywords_mean'] = keywords_mean
         self._debug['keywords_std'] = keywords_std
         
-        new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 2))])
-        popular_keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)
+        new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 4))])
+        self._keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)
 
         phrases = self._blob.noun_phrases
         phrases_counted = Counter(phrases)
@@ -145,6 +146,7 @@ class TLP:
         #self._debug['phrases_mean'] = phrases_mean
         #self._debug['phrases_std'] = phrases_std
 
-        phrases_top = [(k,v) for (k,v) in phrases_counted.iteritems() if v > (phrases_mean + (phrases_std * 2))]
-        self._keywords |= set(self._tlpfilter.keywords([k for (k,v) in phrases_top]))
+        phrases_top = [(k,v) for (k,v) in phrases_counted.iteritems() if v > (phrases_mean + (phrases_std * 3))]
+        #print phrases_top
+        #self._keywords |= set(self._tlpfilter.keywords([k for (k,v) in phrases_top]))
         return self._keywords
