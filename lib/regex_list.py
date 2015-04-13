@@ -7,6 +7,6 @@ regexs = {
     'md5': re.compile(r'^[a-fA-F0-9]{32}$', re.I),
     'sha1': re.compile(r'^[a-fA-F0-9]{40}$', re.I),
     'sha256': re.compile(r'^[a-fA-F0-9]{64}$', re.I),
-    'cves': re.compile(r'cve.+?\d{4}.+?\d{4}.*', re.I)
+    'cve': re.compile(r'cve.+?\d{4}.+?\d{4}.*', re.I)
 
 }
