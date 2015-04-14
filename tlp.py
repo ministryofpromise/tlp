@@ -1,15 +1,16 @@
-# tlp.py - threat language parser
-#
-# author: { ministry of promise }
-# version: 0.1
+__author__ =  '{ ministry of promise }'
+__version__ =  '0.1.0'
 
-# todo:
-#
-# - move to more sophisticated statistical model using histograms for keyword and phrase 
-#   derivation
-# - improve filter set
-# - improve regex capabilities
-# - use mozilla tld list to verify domain regex hits, removing ghetto file name matches
+'''
+todo:
+
+- move to more sophisticated statistical model using histograms for keyword and phrase 
+  derivation
+- improve filter set
+- improve regex capabilities
+- use mozilla tld list to verify domain regex hits, removing ghetto file name matches
+
+'''
 
 
 import nltk,re,operator,math,pprint
@@ -48,12 +49,6 @@ class TLP:
             import traceback
             traceback.print_exc()
 
-    
-    # filter functions
-    ############################################################################
-    #
-    # filter a list of words (words, tokens, iocs) against common terms or domains found
-    # in threat data.
 
     @property 
     def iocs(self):
@@ -77,6 +72,11 @@ class TLP:
         return self._iocs
 
 
+    @property
+    def text(self):
+        return "  ".join([s.raw for s in self._clean_blob.sentences])
+
+
     @property 
     def summary(self):
 
@@ -86,16 +86,13 @@ class TLP:
         sentences = self._clean_blob.sentences
         slen = len(sentences)
         sixth_pctl = int(math.floor(slen * .06))
-        summ_len = sixth_pctl if sixth_pctl < 8 else 8
-        counter = 0
-    
+        if sixth_pctl < 8:
+            summ_len = sixth_pctl if sixth_pctl > 2 else 2
+        else:
+            summ_len = 8
+        
         return "  ".join([s.raw for s in sentences[:summ_len]])
 
-    @property
-    def text(self):
-        return "  ".join([s.raw for s in self._clean_blob.sentences])
-    
-    
 
     @property
     def keywords(self):
@@ -136,17 +133,4 @@ class TLP:
         new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 4))])
         self._keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)
 
-        phrases = self._blob.noun_phrases
-        phrases_counted = Counter(phrases)
-        phrase_scores = [v for (k,v) in phrases_counted.iteritems()]
-        phrases_mean = np.mean(phrase_scores)
-        phrases_std = np.std(phrase_scores)
-
-        #self._debug['phrases_total'] = sum(phrase_scores)
-        #self._debug['phrases_mean'] = phrases_mean
-        #self._debug['phrases_std'] = phrases_std
-
-        phrases_top = [(k,v) for (k,v) in phrases_counted.iteritems() if v > (phrases_mean + (phrases_std * 3))]
-        #print phrases_top
-        #self._keywords |= set(self._tlpfilter.keywords([k for (k,v) in phrases_top]))
         return self._keywords
