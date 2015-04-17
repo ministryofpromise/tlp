@@ -1,16 +1,10 @@
-__author__ =  '{ ministry of promise }'
-__version__ =  '0.1.0'
+#!/usr/bin/env python
 
 '''
-todo:
-
-- move to more sophisticated statistical model using histograms for keyword and phrase 
-  derivation
-- improve filter set
-- improve regex capabilities
-
+tlp is a python library that parses a body of text for indicators of compromise (iocs), 
+leveraging the amazing textblob and nltk natural language processing modules to derive 
+context and color around those iocs. 
 '''
-
 
 import nltk,re,operator,math,pprint
 import numpy as np
@@ -20,6 +14,14 @@ from nltk.util import ngrams
 from collections import Counter
 from textblob import TextBlob
 from lib.regex_list import regexs
+
+__author__ = "{ ministry of promise }"
+__copyright__ = "Copyright 2015, { ministry of promise }"
+__license__ = "MIT"
+__version__ = "0.1.0"
+__maintainer__ = "Adam Nichols"
+__email__ = "adam.j.nichols@gmail.com"
+__status__ = "Development"
 
 class TLP:
 
@@ -52,6 +54,7 @@ class TLP:
 
     @property 
     def iocs(self):
+        '''returns a filtered list of iocs'''
 
         try:
             if len(self._iocs) > 0:
@@ -79,6 +82,8 @@ class TLP:
 
     @property
     def text(self):
+        '''returns the complete filtered text'''
+
         try:
             return "  ".join([s.raw for s in self._clean_blob.sentences])
 
@@ -88,11 +93,13 @@ class TLP:
 
     @property
     def debug(self):
+        '''returns debug info -  must run 'keywords' or 'iocs' to populate'''
         return self._debug
 
 
     @property 
     def summary(self):
+        '''returns document summary'''
 
         try:
             if len(self._summary) > 0:
@@ -114,6 +121,7 @@ class TLP:
 
     @property
     def color(self):
+        '''returns tlp color (if present)'''
 
         try:
             bigrams = ngrams(self._raw_text.split(), 2)
@@ -131,6 +139,7 @@ class TLP:
  
     @property
     def keywords(self):
+        '''returns document keywords and occurance counts'''
 
         try:
             if len(self._keywords) > 0:

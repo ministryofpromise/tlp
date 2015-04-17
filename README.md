@@ -56,7 +56,7 @@ This dependency should be installed by setuptools automatically, but in the even
         and are attempting to leverage them to proliferate their love of 'My Little Pony.' 
         Let's explore how we punched them repeatedly with our data."
         >>>
-        >>> # get keywords, including calculation stats
+        >>> # get keywords, occurance counts
         >>> tlp.keywords
         [
             (u'miscreant', 97), 
@@ -64,7 +64,7 @@ This dependency should be installed by setuptools automatically, but in the even
             (u'whiskey', 18)
         ]
         >>>
-        >>> # get indicators
+        >>> # get indicators, sorted by type
         >>> tlp.indicators
         {
             'cve': set([u'cve-2011-0611', 
@@ -79,11 +79,11 @@ This dependency should be installed by setuptools automatically, but in the even
             'sha256': set([])
         }
         >>>
-        >>> # get tlp color
+        >>> # get tlp color (if present)
         >>> tlp.color
         set([u'white'])
         >>>
-        >>> # get debug info
+        >>> # get debug info, including total word count, and word frequency mean/stddev
         >>> tlp.debug
         {
             'keywords': {
@@ -95,17 +95,33 @@ This dependency should be installed by setuptools automatically, but in the even
                 'ip': 2,
                 'domain': 2, 
                 'md5': 1
+                'sha1': 0,
+                'sha256': 0,
+                'cve': 3
             }
         }
+        >>>
+        >>> # get filtered text used for parsing
+        >>> tlp.text
+        u"This report outlines a terrible scourge upon our internets: miscreants. We have
+        discovered that miscreants are systematically taking over the series of tubes, and
+        and are attempting to leverage them to proliferate their love of 'My Little Pony.' 
+        Let's explore how we punched them repeatedly with our data.
+        ...
+        
+        "In conclusion -- bottom's up!"
+        
 
 ## Todo
 
 - Improve keyword accuracy with a more robust statistical approach and better contextual language processing
+- Modify ioc filter engine to allow for more modular filter management
 - Allow for more flexibility in parsing and filtering at object creation 
 - Grow/improve regex and filter sets
+- Include the use of "title" __init__ arg in keyword weighting
 
 ## Contributing
-This is very much an alpha's alpha, so we expect many smart people will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome. :)
+This is very much an alpha, so we expect some folks will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome. :)
 
 If you are a threat intelligence publisher who would like to be added to the tlp whitelist, please [contact](mailto:github@ministryofpromise.co.uk) us.
 

@@ -1,5 +1,10 @@
-__author__ = "{ ministryof promise }"
-__version__ = "0.1.0"
+#!/usr/bin/env python
+
+'''
+tlp is a python library that parses a body of text for indicators of compromise (iocs), 
+leveraging the amazing textblob and nltk natural language processing modules to derive 
+context and color around those iocs. 
+'''
 
 from textblob import TextBlob
 from textblob import Sentence
@@ -12,6 +17,14 @@ from lib.filter_list import *
 from pkg_resources import resource_filename, Requirement
 import numpy as np
 import types,re,operator,codecs
+
+__author__ = "{ ministry of promise }"
+__copyright__ = "Copyright 2015, { ministry of promise }"
+__license__ = "MIT"
+__version__ = "0.1.0"
+__maintainer__ = "Adam Nichols"
+__email__ = "adam.j.nichols@gmail.com"
+__status__ = "Development"
 
 class TLPFilter:
 
@@ -285,6 +298,7 @@ class TLPFilter:
                 if not type(data) is dict or data is None:
                     raise ValueError('invalid data supplied')
         
+                # filter domain
                 moz_tlds = self.moz_tlds()
                 for ioc in data['domain'].copy():
                     filterlist = alexa_filterlist + ioc_filterlist['domain']
@@ -300,7 +314,13 @@ class TLPFilter:
                             break
                     else:
                         data['domain'].remove(ioc)
-        
+
+                # filter ip
+                for ioc in data['ip'].copy():
+                    filterlist = ioc_filterlist['ip']
+                    if ioc in filterlist:
+                        data['ip'].remove(ioc)     
+    
                 return data
 
         except Exception as e:

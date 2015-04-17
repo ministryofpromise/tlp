@@ -1,3 +1,11 @@
+__author__ = "{ ministry of promise }"
+__copyright__ = "Copyright 2015, { ministry of promise }"
+__license__ = "MIT"
+__version__ = "0.1.0"
+__maintainer__ = "Adam Nichols"
+__email__ = "adam.j.nichols@gmail.com"
+__status__ = "Development"
+
 import re
 
 regexs = {
