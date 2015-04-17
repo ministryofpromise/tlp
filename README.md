@@ -11,9 +11,13 @@ To solve this problem, tlp uses a combination of regular expression, part-of-spe
 
 ## Installation
 
-tlp uses setuptools, so installation of the module is as easy as cloning into it, and running:
+tlp can be found on PyPi, and installed with:
+    
+    $ pip install tlp
 
-    $ setup.py
+you are also able to clone this repo, and run:
+
+    $ python setup.py install
     
 ## Dependencies
 
@@ -44,9 +48,14 @@ This dependency should be installed by setuptools automatically, but in the even
         >>> ...
         >>> threat_text = get_threat_data_from_something()
         >>> tlp = TLP(threat_text)
+        >>>
         >>> # get summary
         >>> tlp.summary
-        u"This report outlines a terrible scourge upon our internets: miscreants. We have discovered that miscreants are systematically taking over a series of tubes, and attempting to leverage them to proliferate their love of 'My Little Pony.'  Let us explore how we've punched them repeatedly with our data."
+        u"This report outlines a terrible scourge upon our internets: miscreants. We have discovered 
+        that miscreants are systematically taking over a series of tubes, and attempting to leverage 
+        them to proliferate their love of 'My Little Pony.'  Let us explore how we've punched them 
+        repeatedly with our data."
+        >>>
         >>> # get keywords, including calculation stats
         >>> tlp.keywords
         {
@@ -56,6 +65,7 @@ This dependency should be installed by setuptools automatically, but in the even
                   u'scotch whiskey'
                   ])
         }
+        >>>
         >>> # get indicators
         >>> tlp.indicators
         {
@@ -70,6 +80,11 @@ This dependency should be installed by setuptools automatically, but in the even
             'sha1': set([]),
             'sha256': set([])
         }
+        >>>
+        >>> # get tlp color
+        >>> tlp.color
+        set([u'white'])
+        >>>
         >>> # get debug info
         >>> tlp.debug
         {
