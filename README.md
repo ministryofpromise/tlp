@@ -99,7 +99,7 @@ This dependency should be installed by setuptools automatically, but in the even
         }
 
 ## Contributing
-We welcome any contributions to improve the code.  This is very much an alpha's alpha, so we expect many smart people will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome.
+This is very much an alpha's alpha, so we expect many smart people will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome. :)
 
 If you are a threat intelligence publisher who would like to be added to the tlp whitelist, please [contact](mailto:github@ministryofpromise.co.uk) us.
 
