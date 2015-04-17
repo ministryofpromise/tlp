@@ -64,8 +64,8 @@ This dependency should be installed by setuptools automatically, but in the even
             (u'whiskey', 18)
         ]
         >>>
-        >>> # get indicators, sorted by type
-        >>> tlp.indicators
+        >>> # get iocs, sorted by type
+        >>> tlp.iocs
         {
             'cve': set([u'cve-2011-0611', 
                         u'cve-2013-1347', 
