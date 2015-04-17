@@ -36,7 +36,7 @@ Note that most numpy installs require compilation, so you will probably have to 
 ### levenshtein
 This dependency should be installed by setuptools automatically, but in the event that fails:
 
-        $ pip install -U levenshtein
+        $ pip install -U python-Levenshtein
         
 ## Usage
 

@@ -17,6 +17,7 @@ import nltk,re,operator,math,pprint
 import numpy as np
 from tlp_filter import TLPFilter
 from nltk.corpus import stopwords
+from nltk.util import ngrams
 from collections import Counter
 from textblob import TextBlob
 from lib.regex_list import regexs
@@ -100,12 +101,25 @@ class TLP:
 
 
     @property
+    def color(self):
+        bigrams = ngrams(self._raw_text.split(), 2)
+        colors = set()
+        for b in bigrams:
+            (one, two) = b
+            if re.search('(?:tlp|TLP)', one): 
+                colors.add(two.lower())
+                
+        return colors 
+
+ 
+    @property
     def keywords(self):
 
         if len(self._keywords) > 0:
             return self._keywords
 
-        blob = TextBlob(self.summary)
+        #blob = TextBlob(self.summary)
+        blob = TextBlob(self._clean_text)
         keywords = self._blob.words
         keywords = self._tlpfilter.keywords(keywords)
         keywords_counted = dict(Counter(keywords))
