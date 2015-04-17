@@ -8,7 +8,6 @@ todo:
   derivation
 - improve filter set
 - improve regex capabilities
-- use mozilla tld list to verify domain regex hits, removing ghetto file name matches
 
 '''
 
@@ -54,28 +53,37 @@ class TLP:
     @property 
     def iocs(self):
 
-        if len(self._iocs) > 0:
+        try:
+            if len(self._iocs) > 0:
+                return self._iocs
+    
+            # prime the dict
+            self._iocs = dict((k, set()) for k in regexs)
+            
+            # parse iocs
+            data = self._tlpfilter.iocs(self._raw_text, mode='pre')
+            for w in data:
+                # remove the neuter braces, if present
+                re.sub(ur'[\[\]]+?', '', w)
+                for name,pattern in regexs.iteritems():
+                    if(re.match(pattern, w)):
+                         self._iocs[name].add(w)
+            self._iocs = self._tlpfilter.iocs(self._iocs, mode='post')
+            for key in self._iocs:
+                self._debug['iocs'][key] = len(self._iocs[key])
             return self._iocs
 
-        # prime the dict
-        self._iocs = dict((k, set()) for k in regexs)
-        
-        # parse iocs
-        data = self._tlpfilter.iocs(self._raw_text, mode='pre')
-        for w in data:
-            # remove the neuter braces, if present
-            re.sub(ur'[\[\]]+?', '', w)
-            for name,pattern in regexs.iteritems():
-                if(re.match(pattern, w)):
-                     self._debug['iocs'][name] = self._debug['iocs'].get(name, 0) + 1
-                     self._iocs[name].add(w)
-        self._iocs = self._tlpfilter.iocs(self._iocs, mode='post')
-        return self._iocs
+        except Exception as e:
+            raise e
 
 
     @property
     def text(self):
-        return "  ".join([s.raw for s in self._clean_blob.sentences])
+        try:
+            return "  ".join([s.raw for s in self._clean_blob.sentences])
+
+        except Exception as e:
+            raise e
 
 
     @property
@@ -86,70 +94,83 @@ class TLP:
     @property 
     def summary(self):
 
-        if len(self._summary) > 0:
-            return self._summary
-        
-        sentences = self._clean_blob.sentences
-        slen = len(sentences)
-        sixth_pctl = int(math.floor(slen * .06))
-        if sixth_pctl < 8:
-            summ_len = sixth_pctl if sixth_pctl > 2 else 2
-        else:
-            summ_len = 8
-        
-        return "  ".join([s.raw for s in sentences[:summ_len]])
+        try:
+            if len(self._summary) > 0:
+                return self._summary
+            
+            sentences = self._clean_blob.sentences
+            slen = len(sentences)
+            sixth_pctl = int(math.floor(slen * .06))
+            if sixth_pctl < 8:
+                summ_len = sixth_pctl if sixth_pctl > 2 else 2
+            else:
+                summ_len = 8
+            
+            return "  ".join([s.raw for s in sentences[:summ_len]])
+
+        except Exception as e:
+            raise e
 
 
     @property
     def color(self):
-        bigrams = ngrams(self._raw_text.split(), 2)
-        colors = set()
-        for b in bigrams:
-            (one, two) = b
-            if re.search('(?:tlp|TLP)', one): 
-                colors.add(two.lower())
+
+        try:
+            bigrams = ngrams(self._raw_text.split(), 2)
+            colors = set()
+            for b in bigrams:
+                (one, two) = b
+                if re.search('(?:tlp|TLP)', one): 
+                    colors.add(two.lower())
                 
-        return colors 
+            return colors 
+
+        except Exception as e:
+            raise e
 
  
     @property
     def keywords(self):
 
-        if len(self._keywords) > 0:
-            return self._keywords
-
-        #blob = TextBlob(self.summary)
-        blob = TextBlob(self._clean_text)
-        keywords = self._blob.words
-        keywords = self._tlpfilter.keywords(keywords)
-        keywords_counted = dict(Counter(keywords))
-        total_count = 0
-        keywords_dict = dict()
-        for word, count in keywords_counted.iteritems():
-
-            if len(word) == 0:
-                continue
+        try:
+            if len(self._keywords) > 0:
+                return self._keywords
     
-            # you're certainly not popular if you only occur once
-            # if you are popular, and you're longer than 3 chars, you win
-
-            total_count += count if count > 1 else 0
-            pos_array = nltk.pos_tag(nltk.word_tokenize(word))
-            w,pos = pos_array[0]
-            if re.search('.*[NN|NP]$', pos):
-                if len(w) > 3:
-                    keywords_dict[word] = count 
+            #blob = TextBlob(self.summary)
+            blob = TextBlob(self._clean_text)
+            keywords = self._blob.words
+            keywords = self._tlpfilter.keywords(keywords)
+            keywords_counted = dict(Counter(keywords))
+            total_count = 0
+            keywords_dict = dict()
+            for word, count in keywords_counted.iteritems():
+    
+                if len(word) == 0:
+                    continue
         
-        keyword_scores = [v for (k,v) in keywords_dict.iteritems()]
-        keywords_count = np.count_nonzero(keyword_scores)
-        keywords_mean = np.mean(keyword_scores)
-        keywords_std = np.std(keyword_scores)
-
-        self._debug['keywords']['total'] = sum(keyword_scores)
-        self._debug['keywords']['mean'] = keywords_mean
-        self._debug['keywords']['std'] = keywords_std
-        
-        new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 4))])
-        self._keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)
-
-        return self._keywords
+                # you're certainly not popular if you only occur once
+                # if you are popular, and you're longer than 3 chars, you win
+    
+                total_count += count if count > 1 else 0
+                pos_array = nltk.pos_tag(nltk.word_tokenize(word))
+                w,pos = pos_array[0]
+                if re.search('.*[NN|NP]$', pos):
+                    if len(w) > 3:
+                        keywords_dict[word] = count 
+            
+            keyword_scores = [v for (k,v) in keywords_dict.iteritems()]
+            keywords_count = np.count_nonzero(keyword_scores)
+            keywords_mean = np.mean(keyword_scores)
+            keywords_std = np.std(keyword_scores)
+    
+            self._debug['keywords']['total'] = sum(keyword_scores)
+            self._debug['keywords']['mean'] = keywords_mean
+            self._debug['keywords']['std'] = keywords_std
+            
+            new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 4))])
+            self._keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)
+    
+            return self._keywords
+            
+        except Exception as e:
+            raise e

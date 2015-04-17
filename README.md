@@ -24,11 +24,11 @@ you are also able to clone this repo, and run:
 The following modules are required for tlp to function:
 
 ### TextBlob
-TextBlob will be installed by nlp by default.  if you need to install manually, run:
+TextBlob will be installed by default.  if you need to install manually, run:
 
         $ pip install -U textblob
 
-After installing, you'll need to download and install the rest of the nltk corpora by running the following command:
+NOTE: Regardless whether automatically or manually instaled, you'll need to download and install the rest of the nltk corpora by running the following command:
 
         $ python -m textblob.download_corpora
     
@@ -97,6 +97,12 @@ This dependency should be installed by setuptools automatically, but in the even
                 'md5': 1
             }
         }
+
+## Todo
+
+- Improve keyword accuracy with a more robust statistical approach and better contextual language processing
+- Allow for more flexibility in parsing and filtering at object creation 
+- Grow/improve regex and filter sets
 
 ## Contributing
 This is very much an alpha's alpha, so we expect many smart people will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome. :)
