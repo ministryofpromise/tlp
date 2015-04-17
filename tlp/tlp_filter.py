@@ -9,6 +9,7 @@ from nltk.corpus import stopwords as sw
 from collections import Counter
 from Levenshtein import distance
 from lib.filter_list import *
+from pkg_resources import resource_filename, Requirement
 import numpy as np
 import types,re,operator,codecs
 
@@ -80,7 +81,8 @@ class TLPFilter:
 
 
     def moz_tlds(self):
-        f = codecs.open('lib/effective_tld_names.dat', 'r', 'utf-8')
+        effective_tld_names = resource_filename(Requirement.parse('tlp'), 'tlp/lib/effective_tld_names.dat')
+        f = codecs.open(effective_tld_names, 'r', 'utf-8')
         moz_tlds = f.readlines()
         moz_tlds = [item.strip() for item in moz_tlds if not (re.match('^//', item) or re.match('^$', item))]
     

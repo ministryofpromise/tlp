@@ -19,6 +19,8 @@ setup(
     keywords = "tlp threat language parser ioc nlp textblob nltk",
     url = "http://github.com/ministryofpromise/tlp",
     packages=find_packages(),
+    package_dir={'tlp': 'tlp'},
+    package_data={'tlp': ['lib/effective_tld_names.dat']},
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
