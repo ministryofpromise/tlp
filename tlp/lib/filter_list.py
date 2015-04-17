@@ -126,7 +126,9 @@ ioc_filterlist = {
     'domain' : [
         u'cisco.com',
         u'fireeye.com',
+        u'ipviking.com',
         u'kaspersky.com',
+        u'norse-corp.com',
         u'verisign.com'
     ],
     'ip' : [

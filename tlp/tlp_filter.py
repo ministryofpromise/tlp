@@ -209,17 +209,21 @@ class TLPFilter:
         else:
             raise ValueError('no input keywords supplied')
 
+        # normalize case
+        words = [word.lower() for word in keywords]
+
         # remove all stopwords
         stopwords = sw.words("english")
-        words = [word for word in keywords if word not in stopwords] 
-        words = [word for word in keywords] 
-        #words = [word.singularize() for word in keywords] 
+        words = [word for word in words if word not in stopwords] 
+        #words = [word for word in keywords] 
         nwords = []
         for word in words:
-            if word.string in keyword_filterlist:
+            if word in keyword_filterlist:
+            #if word.string in keyword_filterlist:
                 continue
             for term in self.global_filterlist:
-                if word.string in term:
+                #if word.string in term:
+                if word in term:
                     pass
                     #break
             else:
