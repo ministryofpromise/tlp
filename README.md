@@ -51,10 +51,10 @@ This dependency should be installed by setuptools automatically, but in the even
         >>>
         >>> # get summary
         >>> tlp.summary
-        u"This report outlines a terrible scourge upon our internets: miscreants. We have discovered 
-        that miscreants are systematically taking over a series of tubes, and attempting to leverage 
-        them to proliferate their love of 'My Little Pony.'  Let us explore how we've punched them 
-        repeatedly with our data."
+        u"This report outlines a terrible scourge upon our internets: miscreants. We have
+        discovered that miscreants are systematically taking over the series of tubes, and
+        and are attempting to leverage them to proliferate their love of 'My Little Pony.' 
+        Let's explore how we punched them repeatedly with our data."
         >>>
         >>> # get keywords, including calculation stats
         >>> tlp.keywords
