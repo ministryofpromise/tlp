@@ -28,7 +28,7 @@ TextBlob will be installed by default.  if you need to install manually, run:
 
         $ pip install -U textblob
 
-NOTE: Regardless whether automatically or manually instaled, you'll need to download and install the rest of the nltk corpora by running the following command:
+*PLEASE NOTE:* Regardless of whether TextBlob is automatically or manually installed, you'll need to download and install the rest of the nltk corpora by running the following command:
 
         $ python -m textblob.download_corpora
     
@@ -101,7 +101,7 @@ This dependency should be installed by setuptools automatically, but in the even
             }
         }
         >>>
-        >>> # get filtered text used for parsing
+        >>> # get complete filtered text used for data distillation 
         >>> tlp.text
         u"This report outlines a terrible scourge upon our internets: miscreants. We have
         discovered that miscreants are systematically taking over the series of tubes, and
