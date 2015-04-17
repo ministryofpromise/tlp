@@ -37,7 +37,7 @@ Note that most numpy installs require compilation, so you will probably have to 
 
         $ pip install -U numpy
         
-### levenshtein
+### python-Levenshtein
 This dependency should be installed by setuptools automatically, but in the event that fails:
 
         $ pip install -U python-Levenshtein
@@ -58,13 +58,11 @@ This dependency should be installed by setuptools automatically, but in the even
         >>>
         >>> # get keywords, including calculation stats
         >>> tlp.keywords
-        {
-          'keywords': set([
-                  u'miscreant', 
-                  u'punch', 
-                  u'scotch whiskey'
-                  ])
-        }
+        [
+            (u'miscreant', 97), 
+            (u'punch', 39), 
+            (u'whiskey', 18)
+        ]
         >>>
         >>> # get indicators
         >>> tlp.indicators
