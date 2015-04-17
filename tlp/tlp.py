@@ -35,7 +35,7 @@ class TLP:
             self._keywords = set()
             self._iocs = dict()
             self._tlp = None
-            self._debug = dict()
+            self._debug = dict({'iocs': dict(), 'keywords': dict()})
 
             if self._raw_text != None:
                 if not type(self._raw_text) is unicode:
@@ -66,7 +66,7 @@ class TLP:
             re.sub(ur'[\[\]]+?', '', w)
             for name,pattern in regexs.iteritems():
                 if(re.match(pattern, w)):
-                     self._debug[name] = self._debug.get(name, 0) + 1
+                     self._debug['iocs'][name] = self._debug['iocs'].get(name, 0) + 1
                      self._iocs[name].add(w)
         self._iocs = self._tlpfilter.iocs(self._iocs, mode='post')
         return self._iocs
@@ -75,6 +75,11 @@ class TLP:
     @property
     def text(self):
         return "  ".join([s.raw for s in self._clean_blob.sentences])
+
+
+    @property
+    def debug(self):
+        return self._debug
 
 
     @property 
@@ -126,9 +131,9 @@ class TLP:
         keywords_mean = np.mean(keyword_scores)
         keywords_std = np.std(keyword_scores)
 
-        self._debug['keywords_total'] = sum(keyword_scores)
-        self._debug['keywords_mean'] = keywords_mean
-        self._debug['keywords_std'] = keywords_std
+        self._debug['keywords']['total'] = sum(keyword_scores)
+        self._debug['keywords']['mean'] = keywords_mean
+        self._debug['keywords']['std'] = keywords_std
         
         new_dict = dict([(k,v) for (k,v) in keywords_dict.iteritems() if v > (keywords_mean + (keywords_std * 4))])
         self._keywords = sorted(new_dict.items(), key=operator.itemgetter(1), reverse = True)

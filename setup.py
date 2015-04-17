@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'nltk', 
         'textblob', 
-        'levenshtein',
+        'python-Levenshtein',
         'numpy'
     ]
 )
