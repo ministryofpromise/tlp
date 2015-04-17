@@ -33,6 +33,11 @@ Note that most numpy installs require compilation, so you will probably have to 
 
         $ pip install -U numpy
         
+### levenshtein
+This dependency should be installed by setuptools automatically, but in the event that fails:
+
+        $ pip install -U levenshtein
+        
 ## Usage
 
         >>> from tlp import TLP
@@ -41,9 +46,7 @@ Note that most numpy installs require compilation, so you will probably have to 
         >>> tlp = TLP(threat_text)
         >>> # get summary
         >>> tlp.summary
-        u"This report outlines a terrible scourge upon our internets: miscreants.
-        ...
-        Let's explore how we've punched them repeatedly with our data."
+        u"This report outlines a terrible scourge upon our internets: miscreants. We have discovered that miscreants are systematically taking over a series of tubes, and attempting to leverage them to proliferate their love of 'My Little Pony.'  Let us explore how we've punched them repeatedly with our data."
         >>> # get keywords, including calculation stats
         >>> tlp.keywords
         {
@@ -51,37 +54,36 @@ Note that most numpy installs require compilation, so you will probably have to 
                   u'miscreant', 
                   u'punch', 
                   u'scotch whiskey'
-                  ]),
-          'stats': {
-                  'keywords_std': 6.4930233110851798, 
-                  'keywords_mean': 3.227953410981697, 
-                  'phrases_mean': 1.5883905013192612, 
-                  'phrases_total': 1204, 
-                  'keywords_total': 1940, 
-                  'phrases_std': 3.1767579921851676
-                  }
+                  ])
         }
         >>> # get indicators
         >>> tlp.indicators
         {
-            'indicators': set([
-                      u'miscreantsmustsuffer.com', 
-                      u'8.8.4.4',
-                      u'ministryofpromise.co.uk', 
-                      u'127.0.0.1'
-                      ]), 
-            'stats': {
-                    'ip': 2, 
-                    'domain': 2, 
-                    'cves': 3
-                    }, 
-            'cves': set([
-                      u'cve-2011-0611', 
-                      u'cve-2013-1347', 
-                      u'cve-2013-2465'
-                      ])
+            'cve': set([u'cve-2011-0611', 
+                        u'cve-2013-1347', 
+                        u'cve-2013-2465']),
+            'domain': set([u'miscreantsmustsuffer.com',
+                           u'ministryofpromise.co.uk']),
+            'ip': set([u'8.8.4.4',
+                       u'127.0.0.1']),
+            'md5': set([u'6fc67ebcb6423efa06198cd123ffc3ee']),
+            'sha1': set([]),
+            'sha256': set([])
+        }
+        >>> # get debug info
+        >>> tlp.debug
+        {
+            'keywords': {
+                'std': 2.5559937998299809, 
+                'total': 1012, 
+                'mean': 2.0321285140562249
+            }, 
+            'iocs': {
+                'ip': 2,
+                'domain': 2, 
+                'md5': 1
             }
-        
+        }
 
 ## Contributing
 We welcome any contributions to improve the code.  This is very much an alpha's alpha, so we expect many smart people will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome.
