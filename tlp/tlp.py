@@ -66,10 +66,8 @@ class TLP:
             # parse iocs
             data = self._tlpfilter.iocs(self._raw_text, mode='pre')
             for w in data:
-                # remove the neuter braces, if present
-                re.sub(ur'[\[\]]+?', '', w)
                 for name,pattern in regexs.iteritems():
-                    if(re.match(pattern, w)):
+                    if pattern.match(w):
                          self._iocs[name].add(w)
             self._iocs = self._tlpfilter.iocs(self._iocs, mode='post')
             for key in self._iocs:

@@ -28,9 +28,10 @@ TextBlob will be installed by default.  if you need to install manually, run:
 
         $ pip install -U textblob
 
-*PLEASE NOTE:* Regardless of whether TextBlob is automatically or manually installed, you'll need to download and install the rest of the nltk corpora by running the following command:
+*PLEASE NOTE:* Regardless of whether TextBlob is automatically or manually installed, you'll need to download and install the rest of the nltk corpora by running the following commands:
 
         $ python -m textblob.download_corpora
+        $ python -m nltk.downloader stopwords
     
 ### numpy   
 Note that most numpy installs require compilation, so you will probably have to install this as a standalone by running:
@@ -119,6 +120,7 @@ This dependency should be installed by setuptools automatically, but in the even
 - Allow for more flexibility in parsing and filtering at object creation 
 - Grow/improve regex and filter sets
 - Include the use of "title" __init__ arg in keyword weighting
+- Add post-install scripting of corpora actions
 
 ## Contributing
 This is very much an alpha, so we expect some folks will quickly spot inefficiencies or better ways to solve the problem.  All pull requests are welcome. :)

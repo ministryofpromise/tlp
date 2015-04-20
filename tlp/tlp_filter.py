@@ -287,7 +287,13 @@ class TLPFilter:
     
                 # stupid "object replacement character" -- essentially a utf space
                 data = [re.sub(ur'\uFFFC+', ' ', w) for w in data]
+
+                # other whitespace
                 data = [re.sub(ur'[\s\t\n\r]', ' ', w) for w in data]
+
+                # remove the neuter braces, if present
+                data = [re.sub(ur'[\[\]]+', '', w) for w in data]
+
                 data = "".join(data).split(' ')
     
                 return data
