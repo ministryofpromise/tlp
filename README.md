@@ -13,11 +13,11 @@ To solve this problem, tlp uses a combination of regular expression, part-of-spe
 
 tlp can be found on PyPi, and installed with:
     
-    $ pip install tlp
+    pip install tlp
 
 you are also able to clone this repo, and run:
 
-    $ python setup.py install
+    python setup.py install
     
 ## Dependencies
 
@@ -26,22 +26,22 @@ The following modules are required for tlp to function:
 ### TextBlob
 TextBlob will be installed by default.  if you need to install manually, run:
 
-        $ pip install -U textblob
+        pip install -U textblob
 
 *PLEASE NOTE:* Regardless of whether TextBlob is automatically or manually installed, you'll need to download and install the rest of the nltk corpora by running the following commands:
 
-        $ python -m textblob.download_corpora
-        $ python -m nltk.downloader stopwords
+        python -m textblob.download_corpora
+        python -m nltk.downloader stopwords
     
 ### numpy   
 Note that most numpy installs require compilation, so you will probably have to install this as a standalone by running:
 
-        $ pip install -U numpy
+        pip install -U numpy
         
 ### python-Levenshtein
 This dependency should be installed by setuptools automatically, but in the event that fails:
 
-        $ pip install -U python-Levenshtein
+        pip install -U python-Levenshtein
         
 ## Usage
 
